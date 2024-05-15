@@ -8,13 +8,29 @@ const wss = new WebSocket.Server({ server });
 
 app.use(express.static('public'));
 
+// 連接池，保存所有連接的 WebSocket
+/** @type {Set<WebSocket>} */
+const clients = new Set();
+
 wss.on('connection', function connection(ws) {
+
+  // 將新連接的 Ws 加入 連接池
+  clients.add(ws);
+
   console.log('Client connected');
 
   ws.on('message', function incoming(message) {
     console.log('Received: %s', message);
     // Echo message back to client
-    ws.send(message);
+    // ws.send(message);
+
+    // for each and sent to all connect.
+    clients.forEach( client => {
+        if( client != ws && client.readyState === WebSocket.OPEN ){
+            client.send( message );
+        }
+    } )
+
   });
 
   ws.on('close', function close() {
