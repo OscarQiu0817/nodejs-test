@@ -5,3 +5,10 @@
 npm 路徑可藉由以下指令查看  
 
 npm list -g --depth=0
+
+----
+
+安裝 nodemon : 
+npm install -g nodemon
+
+自動偵測 伺服器文件若有修改則自動重新啟動.
