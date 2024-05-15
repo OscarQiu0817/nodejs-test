@@ -21,8 +21,19 @@
     const sendButton = document.getElementById('send-button');
 
     socket.onmessage = function(event) {
+      console.log(event);
       const message = event.data;
-      messagesContainer.innerHTML += '<p>' + message + '</p>';
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        const text = reader.result;
+        console.log('Received message:', text);
+        messagesContainer.innerHTML += '<p>' + text + '</p>';
+        // 在这里处理接收到的文本消息
+      };
+      reader.readAsText(message);
+
+      
     };
 
     sendButton.addEventListener('click', function() {
