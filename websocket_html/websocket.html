@@ -15,34 +15,61 @@
   </div>
 
   <script>
-    const socket = new WebSocket('ws://localhost:3000');
+    // const socket = new WebSocket('ws://localhost:3000');
+    const socket = new WebSocket('ws://localhost:3681/notify');
 
     const messagesContainer = document.getElementById('messages');
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
 
     socket.onmessage = function(event) {
-      console.log(event);
-      const message = event.data;
 
-      const reader = new FileReader();
-      reader.onload = function() {
-        const text = reader.result;
-        console.log('Received message:', text);
+      //接收Server傳入的訊息
+      var data = JSON.parse(event.data);
+      console.log(data.message);
+
+      if( document.getElementById('typing') == null ){
         messagesContainer.innerHTML += 
-        `<p><span class='other'>${text}</span></p>`;
-      };
-      reader.readAsText(message);
-
+        `<p id='typing'>
+          <span class='other'><span class="jumping-dots">
+          <span class="dot-1">.</span>
+          <span class="dot-2">.</span>
+          <span class="dot-3">.</span>
+        </span></span></p>`;
+      }
       
+
+      var objDiv = document.getElementById("messages");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      setTimeout(function(){
+        if( document.getElementById('typing') != null ){
+          document.getElementById('typing').remove();
+        }
+        
+        messagesContainer.innerHTML += 
+        `<p><span class='other'>${data.message}</span></p>`;
+
+        var objDiv = document.getElementById("messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+      }, 1500)
+            
     };
 
     sendButton.addEventListener('click', function() {
       const message = messageInput.value;
-      socket.send(message);
-      messageInput.value = '';
-      messagesContainer.innerHTML += 
-      `<p style="text-align: right;"><span class='self'>${message}</span></p>`;
+
+      if( message != null && message.trim() != '' ){
+        socket.send(message);
+        messageInput.value = '';
+        messagesContainer.innerHTML += 
+        `<p style="text-align: right;"><span class='self'>${message}</span></p>`;
+
+        var objDiv = document.getElementById("messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+      }
+
+      
 
     });
   </script>
