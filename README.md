@@ -12,3 +12,7 @@ npm list -g --depth=0
 npm install -g nodemon
 
 自動偵測 伺服器文件若有修改則自動重新啟動.
+
+----
+啟動指令 : 
+nodemon .\websocket-server.js
