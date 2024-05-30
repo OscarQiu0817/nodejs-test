@@ -15,8 +15,8 @@
   </div>
 
   <script>
-    // const socket = new WebSocket('ws://localhost:3000');
-    const socket = new WebSocket('ws://localhost:3681/notify');
+    const socket = new WebSocket('ws://localhost:3000');
+    // const socket = new WebSocket('ws://localhost:3681/notify');
 
     const messagesContainer = document.getElementById('messages');
     const messageInput = document.getElementById('message-input');
@@ -25,34 +25,43 @@
     socket.onmessage = function(event) {
 
       //接收Server傳入的訊息
-      var data = JSON.parse(event.data);
-      console.log(data.message);
+      // var data = JSON.parse(event.data);
+      var data = event.data;
+      let reader = new FileReader();
+      reader.onload = () => {
+        if( document.getElementById('typing') == null ){
 
-      if( document.getElementById('typing') == null ){
-        messagesContainer.innerHTML += 
-        `<p id='typing'>
-          <span class='other'><span class="jumping-dots">
-          <span class="dot-1">.</span>
-          <span class="dot-2">.</span>
-          <span class="dot-3">.</span>
-        </span></span></p>`;
-      }
-      
+          console.log( reader.result )
 
-      var objDiv = document.getElementById("messages");
-      objDiv.scrollTop = objDiv.scrollHeight;
-
-      setTimeout(function(){
-        if( document.getElementById('typing') != null ){
-          document.getElementById('typing').remove();
+          messagesContainer.innerHTML += 
+          `<p id='typing'>
+            <span class='other'><span class="jumping-dots">
+            <span class="dot-1">.</span>
+            <span class="dot-2">.</span>
+            <span class="dot-3">.</span>
+          </span></span></p>`;
         }
         
-        messagesContainer.innerHTML += 
-        `<p><span class='other'>${data.message}</span></p>`;
 
         var objDiv = document.getElementById("messages");
         objDiv.scrollTop = objDiv.scrollHeight;
-      }, 1500)
+
+        setTimeout(function(){
+          if( document.getElementById('typing') != null ){
+            document.getElementById('typing').remove();
+          }
+          
+          messagesContainer.innerHTML += 
+          `<p><span class='other'>${reader.result}</span></p>`;
+
+          var objDiv = document.getElementById("messages");
+          objDiv.scrollTop = objDiv.scrollHeight;
+        }, 1500)
+      }
+
+      reader.readAsText(event.data)
+
+      
             
     };
 
